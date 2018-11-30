@@ -54,7 +54,7 @@ class _Home extends State<Home> {
                 child: ListView.builder(
                   itemCount: snap.data == null ? 0 : bloc.listLenght(),
                   itemBuilder: (context, index) {
-                    return buildCard(snap.data[index]);
+                    return buildCard(snap.data[index], bloc);
                   },
                 ),
               ),
@@ -63,7 +63,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget buildCard(text) {
+  Widget buildCard(text, bloc) {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(color: Colors.grey, width: 3.0),
@@ -116,7 +116,9 @@ class _Home extends State<Home> {
                     color: Theme.of(context).primaryColor,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
-                    onPressed: () {},
+                    onPressed: () {
+                      bloc.showBubbleControl();
+                    },
                   ),
                 ),
               ),

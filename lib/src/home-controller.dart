@@ -6,10 +6,8 @@ import 'dart:io';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 class HomeController implements BlocBase {
-  static const platform =
-      const MethodChannel('flutter.rortega.com.basicchannelcommunication');
+  static const platform = const MethodChannel('erick.com.smartowl');
 
   List<String> _onlineBoards = new List<String>();
 
@@ -37,13 +35,13 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
   }
 
-  Future<Null> ShowBubbleControl() async =>
-      await platform.invokeMethod('showNativeView');
+  Future<Null> showBubbleControl() async =>
+      await platform.invokeMethod('StartBubble');
   Future<Null> GetDataFromNative() async =>
       await platform.invokeMethod('getData');
 
   void sendListOnlineBoards(String s) {
-    if (!_onlineBoards.contains(s) && s.length >= 3 ) {
+    if (!_onlineBoards.contains(s) && s.length >= 3) {
       _onlineBoards.add(s);
     }
     _inDataOnlineBoardsController.add(_onlineBoards);

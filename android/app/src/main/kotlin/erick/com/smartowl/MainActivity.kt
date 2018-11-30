@@ -7,9 +7,10 @@ import io.flutter.app.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 
+
 class MainActivity: FlutterActivity() {
   companion object {
-    const val CHANNEL = "flutter.rortega.com.basicchannelcommunication"
+    const val CHANNEL = "erick.com.smartowl"
   }
 
 
@@ -19,21 +20,22 @@ class MainActivity: FlutterActivity() {
     GeneratedPluginRegistrant.registerWith(this)
 
     val channel = MethodChannel(flutterView, CHANNEL)
-    Thread {
-      while (true) {
-        channel.invokeMethod("message", "Ola, eu sou o android nativo.")
-        Thread.sleep(1_000)  // wait for 1 second
-        channel.invokeMethod("message", "Ola, eu sou o android nativo..")
-        Thread.sleep(1_000)  // wait for 1 second
-        channel.invokeMethod("message", "Ola, eu sou o android nativo...")
-        Thread.sleep(1_000)  // wait for 1 second
-      }
-    }.start()
+    // Thread {
+    //   while (true) {
+    //     channel.invokeMethod("message", "Ola, eu sou o android nativo.")
+    //     Thread.sleep(1_000)  // wait for 1 second
+    //     channel.invokeMethod("message", "Ola, eu sou o android nativo..")
+    //     Thread.sleep(1_000)  // wait for 1 second
+    //     channel.invokeMethod("message", "Ola, eu sou o android nativo...")
+    //     Thread.sleep(1_000)  // wait for 1 second
+    //   }
+    // }.start()
 
     MethodChannel(flutterView, CHANNEL).setMethodCallHandler { call, result ->
-      if (call.method == "showNativeView") {
+      if (call.method == "StartBubble") {
 //        val intent = Intent(this, NativeViewActivity::class.java)
 //        startActivity(intent)
+        startService(Intent(this@MainActivity, FloatWidgetService::class.java))
       }
       if (call.method == "getData") {
         channel.invokeMethod("message", "Ola, eu sou o android nativo...")
