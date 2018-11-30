@@ -35,9 +35,9 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
   }
 
-  Future<Null> showBubbleControl() async =>
+  Future<bool> showBubbleControl() async =>
       await platform.invokeMethod('StartBubble');
-  Future<Null> GetDataFromNative() async =>
+  Future<bool> getDataFromNative() async =>
       await platform.invokeMethod('getData');
 
   void sendListOnlineBoards(String s) {
@@ -58,6 +58,11 @@ class HomeController implements BlocBase {
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case "message":
+        print(call.arguments);
+        // sendData(call.arguments);
+        return new Future.value(call.arguments);
+
+      case "StartBubble":
         print(call.arguments);
         // sendData(call.arguments);
         return new Future.value(call.arguments);
