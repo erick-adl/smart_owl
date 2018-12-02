@@ -51,10 +51,6 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
   }
 
-  int listLenght() {
-    return _onlineBoards.length;
-  }
-
   void sendDataStatus(dynamic c) {
     inDataStatus.add(c);
   }
@@ -64,7 +60,7 @@ class HomeController implements BlocBase {
     String pubTopic = 'smart-owl/setname/${boardName}';
     builder.addString(newName);
     client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
-    inNameStatus.add("Pronto! limpando ista");
+    inNameStatus.add("Pronto! limpando lista");
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
