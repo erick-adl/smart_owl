@@ -35,11 +35,8 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
   }
 
-  Future<bool> showBubbleControl() async =>
-      await platform.invokeMethod('StartBubble');
-  Future<bool> getDataFromNative() async =>
-      await platform.invokeMethod('getData');
-
+  Future<bool> showBubbleControl(String boardName) async => await platform.invokeMethod('StartBubble', boardName);
+  
   void sendListOnlineBoards(String s) {
     if (!_onlineBoards.contains(s) && s.length >= 3) {
       _onlineBoards.add(s);
@@ -56,11 +53,37 @@ class HomeController implements BlocBase {
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
+    print(
+        "******************** _handleMethod ****************** ${call.arguments}");
+
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+    String pubTopic = 'smart-owl/command/${call.arguments}';
+
     switch (call.method) {
-      case "message":
-        print(call.arguments);
-        // sendData(call.arguments);
-        return new Future.value(call.arguments);
+      case "button_left":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
+      case "button_right":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
+      case "button_up":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
+      case "button_down":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
+      case "button_center":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
+      case "button_save":
+        builder.addString(call.method);
+        client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+        break;
 
       case "StartBubble":
         print(call.arguments);

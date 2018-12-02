@@ -14,7 +14,7 @@ class _Home extends State<Home> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Owl'),
+        title: Text('Smart Owl'),
         centerTitle: true,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -27,14 +27,14 @@ class _Home extends State<Home> {
         backgroundColor: Colors.red,
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Container(
-          padding: EdgeInsets.all(15.0),
+        child: Container(          
+          padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
           child: StreamBuilder(
             stream: bloc.outDataStatus,
             builder: (contex, snap) {
               return Text(
                 "${snap.data}",
-                style: TextStyle(fontSize: 20.0, color: Colors.white),
+                style: TextStyle(fontSize: 15.0, color: Colors.white),
               );
             },
           ),
@@ -117,7 +117,7 @@ class _Home extends State<Home> {
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
                     onPressed: () {
-                      bloc.showBubbleControl();
+                      bloc.showBubbleControl(text.toString());
                     },
                   ),
                 ),
