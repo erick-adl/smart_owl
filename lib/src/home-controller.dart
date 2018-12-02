@@ -23,6 +23,12 @@ class HomeController implements BlocBase {
   Stream<String> get outDataStatus => _dataStatusController.stream;
   Sink<String> get inDataStatus => _dataStatusController.sink;
 
+
+  var _nameStatusController = BehaviorSubject<String>(seedValue: "...");
+
+  Stream<String> get outNameStatus => _nameStatusController.stream;
+  Sink<String> get inNameStatus => _nameStatusController.sink;
+
   var _dataOnlineBoardsController = BehaviorSubject<List<String>>();
 
   Stream<List<String>> get ouDataOnlineBoardsController =>
@@ -35,8 +41,9 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
   }
 
-  Future<bool> showBubbleControl(String boardName) async => await platform.invokeMethod('StartBubble', boardName);
-  
+  Future<bool> showBubbleControl(String boardName) async =>
+      await platform.invokeMethod('StartBubble', boardName);
+
   void sendListOnlineBoards(String s) {
     if (!_onlineBoards.contains(s) && s.length >= 3) {
       _onlineBoards.add(s);
@@ -50,6 +57,14 @@ class HomeController implements BlocBase {
 
   void sendDataStatus(dynamic c) {
     inDataStatus.add(c);
+  }
+
+  Future<void> BoardChangeName(String boardName, String newName) async {
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+    String pubTopic = 'smart-owl/setname/${boardName}';
+    builder.addString(newName);
+    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+    inNameStatus.add("Pronto! limpando ista");
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {

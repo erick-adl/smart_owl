@@ -27,7 +27,7 @@ class _Home extends State<Home> {
         backgroundColor: Colors.red,
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Container(          
+        child: Container(
           padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
           child: StreamBuilder(
             stream: bloc.outDataStatus,
@@ -63,7 +63,7 @@ class _Home extends State<Home> {
     );
   }
 
-  Widget buildCard(text, bloc) {
+  Widget buildCard(text, HomeController bloc) {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(color: Colors.grey, width: 3.0),
@@ -96,7 +96,7 @@ class _Home extends State<Home> {
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
                     onPressed: () {
-                      _newNamePlacaAlert(context, text);
+                      _newNamePlacaAlert(context, text, bloc);
                     },
                   ),
                 ),
@@ -129,7 +129,7 @@ class _Home extends State<Home> {
     );
   }
 
-  _newNamePlacaAlert(BuildContext context, String text) {
+  _newNamePlacaAlert(BuildContext context, String text, HomeController bloc) {
     TextEditingController controller = new TextEditingController();
 
     AlertDialog ad = new AlertDialog(
@@ -137,7 +137,7 @@ class _Home extends State<Home> {
           borderRadius: new BorderRadius.circular(10.0)),
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(100.0)),
-        height: 200.0,
+        height: 220.0,
         child: Column(
           children: <Widget>[
             Padding(
@@ -190,9 +190,25 @@ class _Home extends State<Home> {
                     textColor: Colors.white,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
-                    onPressed: () {}),
+                    onPressed: () async {
+                      bloc.BoardChangeName(text, controller.text);
+                      print(text);
+                      print(controller.text);
+                      await Future.delayed(const Duration(seconds: 2), () => "2");
+                      bloc.mqttReset();
+                      Navigator.pop(context);
+                    }),
               ],
-            )
+            ),
+            StreamBuilder(
+                stream: bloc.outNameStatus,
+                builder: (contex, snap) {
+                  return Text(
+                    snap.data,
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  );
+                })
           ],
         ),
       ),
