@@ -23,11 +23,10 @@ class HomeController implements BlocBase {
   Stream<String> get outDataStatus => _dataStatusController.stream;
   Sink<String> get inDataStatus => _dataStatusController.sink;
 
+  var _dataChangeNameController = BehaviorSubject<String>(seedValue: "");
 
-  var _nameStatusController = BehaviorSubject<String>(seedValue: "...");
-
-  Stream<String> get outNameStatus => _nameStatusController.stream;
-  Sink<String> get inNameStatus => _nameStatusController.sink;
+  Stream<String> get outChangeNameStatus => _dataChangeNameController.stream;
+  Sink<String> get inChangeNameStatus => _dataChangeNameController.sink;
 
   var _dataOnlineBoardsController = BehaviorSubject<List<String>>();
 
@@ -35,6 +34,10 @@ class HomeController implements BlocBase {
       _dataOnlineBoardsController.stream;
   Sink<List<String>> get _inDataOnlineBoardsController =>
       _dataOnlineBoardsController.sink;
+
+  void ChangeNameText() {
+    inChangeNameStatus.add("Nome será alterado, aguarde!");
+  }
 
   Future<int> mqttReset() async {
     _onlineBoards.clear();
@@ -60,7 +63,6 @@ class HomeController implements BlocBase {
     String pubTopic = 'smart-owl/setname/${boardName}';
     builder.addString(newName);
     client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
-    inNameStatus.add("Pronto! limpando lista");
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
@@ -165,7 +167,7 @@ class HomeController implements BlocBase {
     client.subscribe(pubTopic, MqttQos.exactlyOnce);
 
     /// Publish it
-    client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
+    // client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload);
   }
 
   @override

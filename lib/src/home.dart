@@ -46,19 +46,29 @@ class _Home extends State<Home> {
       body: StreamBuilder(
           stream: bloc.ouDataOnlineBoardsController,
           builder: (contex, AsyncSnapshot<List<String>> snap) {
-            return Container(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Container(
-                padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
-                margin: EdgeInsets.all(5.0),
-                child: ListView.builder(
-                  itemCount: snap.data == null ? 0 : snap.data.length,
-                  itemBuilder: (context, index) {
-                    return buildCard(snap.data[index], bloc);
-                  },
+            if (!snap.hasData || snap.data.length == 0) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
                 ),
-              ),
-            );
+              );
+            } else if (snap.hasError) {
+              return Center(child: Text("Erro ao conectar..."));
+            } else {
+              return Container(
+                padding: EdgeInsets.only(top: 10.0),
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(5.0, 10.0, 5.0, 5.0),
+                  margin: EdgeInsets.all(5.0),
+                  child: ListView.builder(
+                    itemCount: snap.data == null ? 0 : snap.data.length,
+                    itemBuilder: (context, index) {
+                      return buildCard(snap.data[index], bloc);
+                    },
+                  ),
+                ),
+              );
+            }
           }),
     );
   }
@@ -131,17 +141,17 @@ class _Home extends State<Home> {
 
   _newNamePlacaAlert(BuildContext context, String text, HomeController bloc) {
     TextEditingController controller = new TextEditingController();
-    
+
     AlertDialog ad = new AlertDialog(
       shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(10.0)),
       content: Container(
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(100.0)),
-        height: 220.0,
+        height: 210.0,
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(4.0),
               child: Text(
                 text,
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
@@ -175,7 +185,6 @@ class _Home extends State<Home> {
                 ],
               ),
             ),
-            Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -192,23 +201,29 @@ class _Home extends State<Home> {
                         borderRadius: new BorderRadius.circular(10.0)),
                     onPressed: () async {
                       bloc.BoardChangeName(text, controller.text);
+                      bloc.ChangeNameText();
                       print(text);
                       print(controller.text);
-                      await Future.delayed(const Duration(seconds: 2), () => "2");
+                      await Future.delayed(
+                          const Duration(seconds: 2), () => "2");
                       bloc.mqttReset();
                       Navigator.pop(context);
                     }),
               ],
             ),
-            StreamBuilder(
-                stream: bloc.outNameStatus,
+            Divider(),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: StreamBuilder(
+                stream: bloc.outChangeNameStatus,
                 builder: (contex, snap) {
                   return Text(
-                    snap.data,
-                    style:
-                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                    "${snap.data}",
+                    style: TextStyle(fontSize: 15.0, color: Colors.red),
                   );
-                })
+                },
+              ),
+            )
           ],
         ),
       ),
