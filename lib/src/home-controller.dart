@@ -35,13 +35,27 @@ class HomeController implements BlocBase {
   Sink<List<String>> get _inDataOnlineBoardsController =>
       _dataOnlineBoardsController.sink;
 
-  void ChangeNameText() {
-    inChangeNameStatus.add("Nome será alterado, aguarde!");
+  void ChangeNameText(String s) {
+    inChangeNameStatus.add(s);
   }
 
-  Future<int> mqttReset() async {
+  Future<void> listBoardReset() async {
     _onlineBoards.clear();
     _inDataOnlineBoardsController.add(_onlineBoards);
+    print('Disconnecting');
+    sendDataStatus('Disconnecting');
+    client.disconnect();
+    await MqttUtilities.asyncSleep(2);
+    try {
+      print('Connecting...');
+      sendDataStatus('Connecting...');
+      client = MqttClient('iot.eclipse.org', '');
+      _mqttConnect();
+    } on Exception catch (e) {
+      print(e.toString());
+      sendDataStatus('Erro: $e');
+      client.disconnect();
+    }
   }
 
   Future<bool> showBubbleControl(String boardName) async =>
@@ -59,6 +73,9 @@ class HomeController implements BlocBase {
   }
 
   Future<void> BoardChangeName(String boardName, String newName) async {
+    print("###### DEBUG ###### ${boardName}");
+    print("###### DEBUG ###### ${newName}");
+
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     String pubTopic = 'smart-owl/setname/${boardName}';
     builder.addString(newName);
@@ -125,17 +142,17 @@ class HomeController implements BlocBase {
     try {
       await client.connect();
     } on Exception catch (e) {
-      sendDataStatus('Erro ao conectar - $e');
+      sendDataStatus('Erro: $e');
       client.disconnect();
     }
 
     /// Check we are connected
     if (client.connectionStatus.state == ConnectionState.connected) {
-      sendDataStatus('Usuário conectado');
+      sendDataStatus('Conectado');
     } else {
       /// Use status here rather than state if you also want the broker return code.
       sendDataStatus(
-          'Falha de conexão - desconectando, status: ${client.connectionStatus}');
+          'Falha: ${client.connectionStatus}');
       client.disconnect();
     }
 
@@ -156,12 +173,12 @@ class HomeController implements BlocBase {
 
     /// Lets publish to our topic
     // Use the payload builder rather than a raw buffer
-    print('Publishing our topic');
+    // print('Publishing our topic');
 
     /// Our known topic to publish to
     const String pubTopic = 'smart-owl/online-boards';
-    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
-    builder.addString('camera de seguranca 1');
+    // final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+    // builder.addString('camera de seguranca 1');
 
     /// Subscribe to it
     client.subscribe(pubTopic, MqttQos.exactlyOnce);

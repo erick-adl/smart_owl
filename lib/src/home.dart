@@ -20,7 +20,7 @@ class _Home extends State<Home> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          bloc.mqttReset();
+          bloc.listBoardReset();
         },
         child: Icon(Icons.refresh),
         elevation: 3.0,
@@ -200,13 +200,12 @@ class _Home extends State<Home> {
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(10.0)),
                     onPressed: () async {
-                      bloc.BoardChangeName(text, controller.text);
-                      bloc.ChangeNameText();
-                      print(text);
-                      print(controller.text);
+                      await bloc.BoardChangeName(text, controller.text);
+                      bloc.ChangeNameText("Nome será alterado, aguarde!");
                       await Future.delayed(
                           const Duration(seconds: 2), () => "2");
-                      bloc.mqttReset();
+                      bloc.listBoardReset();
+                      bloc.ChangeNameText(" ");
                       Navigator.pop(context);
                     }),
               ],

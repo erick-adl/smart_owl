@@ -16,7 +16,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="smart_owl"
+        android:label="Smart Owl"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
