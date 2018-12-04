@@ -24,7 +24,7 @@ dev_dependencies:
 flutter_icons:   
   android: true # indica que colocaremos o ícone novo no Android
   ios: true # indica que colocaremos o ícone novo no iOS
-  image_path: "assets/icon/icon.png" # caminho para o ícone   
+  image_path: "assets/icon/icoapp.png" # caminho para o ícone   
 
 flutter:
 
