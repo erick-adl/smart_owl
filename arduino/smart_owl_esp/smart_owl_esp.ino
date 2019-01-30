@@ -1,12 +1,12 @@
 /*
- * Eepron addres:
- * 0 = Servo pos x
- * 1 = Servo pos x
- * 2 = Servo saved int
- * 3 = Name chip saved once
- * 4 = Size name chip
- * 5...X Name Chip
- */
+   Eepron addres:
+   0 = Servo pos x
+   1 = Servo pos x
+   2 = Servo saved int
+   3 = Name chip saved once
+   4 = Size name chip
+   5...X Name Chip
+*/
 
 
 
@@ -65,33 +65,39 @@ void setup() {
 
   /*CONFIG SERIAL*/
   Serial.begin(115200);
-  delay(100);
+  delay(300);
   Serial.println("Starting...");
-  
-    //Config eeprom
-  EEPROM.begin(MEM_ALOC_SIZE);  
-  
+
+  //Config eeprom
+  EEPROM.begin(MEM_ALOC_SIZE);
+
   SavedNameChip_eeprom = EEPROM.read(3);
   SavedSizeNameChip_eeprom = EEPROM.read(4);
   Serial.printf("SavedNameChip_eeprom: %d\n", SavedNameChip_eeprom);
   Serial.printf("SavedSizeNameChip_eeprom: %d\n", SavedSizeNameChip_eeprom);
+
+
+  Serial.println("#########################################");
   
+  if (SavedNameChip_eeprom == 33) {
+    Serial.println("[[[[ READING CHIP NAME ]]]]");
+    read_string_from_eeprom(eeprom_buffer);
+    ID_BOARD = eeprom_buffer;
+    Serial.print("[[[[ CHIP NAME: ");
+    Serial.print(eeprom_buffer);
+    Serial.print(" ]]]]");    
 
-  if(SavedNameChip_eeprom == 33){
-      Serial.printf("Lendo nome do chip na eeprom...\n");
-      read_string_from_eeprom(eeprom_buffer);
-      ID_BOARD = eeprom_buffer;
-      
-    }else{
-      ID_BOARD = "CC" + String(ESP.getChipId());
-      Serial.println(temp);              
-    }
-    
+  } else {
+    Serial.println("[[[[ CHIP ZERO - READIG CHIP ID]]]]");
+    ID_BOARD = "CC" + String(ESP.getChipId());
+    Serial.println(temp);
+  }
 
 
 
-  
-  /*CONFIG WIFI-MANAGER*/  
+
+
+  /*CONFIG WIFI-MANAGER*/
   wifiManager.autoConnect(ID_BOARD.c_str());
 
   //if you get here you have connected to the WiFi
@@ -104,23 +110,23 @@ void setup() {
   client.setCallback(callback);
 
 
-  
+
   SaveposServoRemember_eeprom = EEPROM.read(2);
   Serial.printf("SaveposServoRemember: %d\n", SaveposServoRemember_eeprom);
-  
-  if(SaveposServoRemember_eeprom != 33){
+
+  if (SaveposServoRemember_eeprom != 33) {
     Serial.printf("Salvando primeiros dados...\n");
-    EEPROM.write(2,33);
-    EEPROM.write(0,SERVO_X_INIT);
-    EEPROM.write(1,SERVO_Y_INIT);
-  }else{
+    EEPROM.write(2, 33);
+    EEPROM.write(0, SERVO_X_INIT);
+    EEPROM.write(1, SERVO_Y_INIT);
+  } else {
     Serial.printf("Lendo dados eeprom...\n");
     SaveposServoX_eeprom = EEPROM.read(0);
-    SaveposServoY_eeprom = EEPROM.read(1);    
+    SaveposServoY_eeprom = EEPROM.read(1);
     Serial.printf("SaveposServoX: %d\n", SaveposServoX_eeprom);
     Serial.printf("SaveposServoY: %d\n", SaveposServoY_eeprom);
   }
-    
+
   EEPROM.end();
 
   //  Configure Servo
@@ -184,7 +190,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived in topic {{");
   Serial.print(topic);
   Serial.print("}} ");
-  Serial.print("Payload {{");    
+  Serial.print("Payload {{");
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
   }
@@ -192,7 +198,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   String stringPayload = String((char*)payload);
   String stringTopic = String((char*)topic);
-   
+
   Serial.print("topic_setname = ");
   Serial.println(topic_setname);
 
@@ -201,14 +207,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   Serial.print("stringTopic = ");
   Serial.println(stringTopic);
-  
-  
-  if (stringTopic.equals(topic_setname)) {  
-    Serial.print("### TROCANDO NOME DA PLACA! ###");    
-    EEPROM.begin(MEM_ALOC_SIZE);    
-    save_string_to_eeprom( (char*)payload,length);
+
+
+  if (stringTopic.equals(topic_setname)) {
+    Serial.println("### TROCANDO NOME DA PLACA! ###");
+    EEPROM.begin(MEM_ALOC_SIZE);
+    save_string_to_eeprom( (char*)payload, length);
     read_string_from_eeprom(eeprom_buffer);
     ID_BOARD = eeprom_buffer;
+    EEPROM.write(3, 33);
     EEPROM.end();
     ESP.restart();
   }
@@ -259,11 +266,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (stringPayload.equals("button_save")) {
     //Save position of servos
     SaveposServoY = posServoY;
-    SaveposServoX = posServoX;    
+    SaveposServoX = posServoX;
     //Salvando na eeprom
     EEPROM.begin(MEM_ALOC_SIZE);
-    EEPROM.write(0,posServoX);
-    EEPROM.write(1,posServoY);     
+    EEPROM.write(0, posServoX);
+    EEPROM.write(1, posServoY);
     EEPROM.end();
   }
 
@@ -295,26 +302,30 @@ void reconnect() {
   }
 }
 
-void save_string_to_eeprom(char *stringIn, unsigned int length){
+void save_string_to_eeprom(char *stringIn, unsigned int length) {
 
-    EEPROM.write(4, length);   
-  for(int i = 0; i < length; i++){    
-      EEPROM.write(i + 5, stringIn[i]);   
+  Serial.print("*** Valor salvo na eeprom: ");
+    
+  EEPROM.write(4, length);
+  for (int i = 0; i < length; i++) {
+    EEPROM.write(i + 5, stringIn[i]);
+    Serial.print(stringIn[i]);
   }
+  Serial.println(" ***");
 }
 
 
-void read_string_from_eeprom(char *bufferIn){
-
-  Serial.print("bufferIn sizeof: ");
-  Serial.print(sizeof(bufferIn));  
-  Serial.println();  
+void read_string_from_eeprom(char *bufferIn) {
+  
+  Serial.println();
   unsigned int length = EEPROM.read(4);
-  
-  for(int i = 0; i < length; i++){
-  
+
+  for (int i = 0; i < length; i++) {
+
     bufferIn[i] = EEPROM.read(i + 5);
-  
+
   }
-  Serial.println(bufferIn);
+  Serial.print("*** Valor lido na eeprom: ");
+  Serial.print(bufferIn);
+  Serial.println(" ***");
 }
