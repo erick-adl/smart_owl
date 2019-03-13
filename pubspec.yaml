@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  mqtt_client: ^4.0.0
+  mqtt_client: ^5.5.2
   flutter_launcher_icons: ^0.7.0 #flutter pub pub run flutter_launcher_icons:main
 
   bloc_pattern: ^1.0.0

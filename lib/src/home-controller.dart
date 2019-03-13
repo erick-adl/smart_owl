@@ -11,7 +11,7 @@ class HomeController implements BlocBase {
 
   List<String> _onlineBoards = new List<String>();
 
-  MqttClient client = MqttClient('iot.eclipse.org', '');
+  MqttClient client = MqttClient('broker.hivemq.com', '');
 
   HomeController() {
     platform.setMethodCallHandler(_handleMethod);
@@ -147,7 +147,7 @@ class HomeController implements BlocBase {
     }
 
     /// Check we are connected
-    if (client.connectionStatus.state == ConnectionState.connected) {
+    if (client.connectionStatus.state == MqttConnectionState.connected) {
       sendDataStatus('Conectado');
     } else {
       /// Use status here rather than state if you also want the broker return code.

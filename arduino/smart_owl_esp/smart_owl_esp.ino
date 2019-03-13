@@ -29,7 +29,7 @@ char example_string[] = "~New eeprom string";
 const int eeprom_size = 50; // values saved in eeprom should never exceed 500 bytes
 char eeprom_buffer[eeprom_size];
 
-const char* mqtt_server = "iot.eclipse.org";
+const char* mqtt_server = "broker.hivemq.com";
 
 long lastMsg = 0;
 char msg[50];
