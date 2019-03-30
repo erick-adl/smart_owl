@@ -8,6 +8,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 
 import android.util.Log
+import java.lang.Exception
 
 class MainActivity : FlutterActivity() {
 
@@ -34,6 +35,7 @@ class MainActivity : FlutterActivity() {
         channel.invokeMethod(command, boardName)
         Log.d("##{ COMMAND }####", "DEU CERTO")
     }
+
     var channel = MethodChannel(flutterView, CHANNEL)
 
     private var boardName = ""
@@ -48,20 +50,28 @@ class MainActivity : FlutterActivity() {
         channel = MethodChannel(flutterView, CHANNEL)
 
         MethodChannel(flutterView, CHANNEL).setMethodCallHandler { call, result ->
-            if (call.method == "StartBubble") {
+            try {
+                if (call.method == "StartBubble") {
+                    Log.d("KOTLIN", "Chamei StartBubble")
+                    if (hasOverlayPermission()) {
+                        Log.d("KOTLIN", "Tenho permissão")
+                        startService(Intent(this@MainActivity, FloatWidgetService::class.java))
+                        result.success(true)
+                    } else {
+                        Log.d("KOTLIN", "Não tenho permissão")
+                        requestOverlayPermission(REQUEST_OVERLAY_PERMISSION)
+                        result.success(false)
+                    }
+                    boardName = call.arguments.toString()
 
-                if (hasOverlayPermission()) {
-                    startService(Intent(this@MainActivity, FloatWidgetService::class.java))
-                    result.success(true)
                 } else {
-                    requestOverlayPermission(REQUEST_OVERLAY_PERMISSION)
+                    Log.d("KOTLIN", "OPA! METODO NÃO EXISTE!")
+                    result.notImplemented()
                 }
-                boardName = call.arguments.toString()
 
-                result.success(true)
-            } else {
-                Log.d("####{ 1 }####", "CHEGUEI AQUI! ")
-                result.notImplemented()
+            } catch (e: Exception) {
+                Log.d("KOTLIN", "OPA! DEU MERDA: ${e.message}")
+                Log.d("KOTLIN", "OPA! DEU MERDA: ${e.cause}")
             }
         }
     }

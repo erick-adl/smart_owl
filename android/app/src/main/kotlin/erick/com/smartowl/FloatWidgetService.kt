@@ -14,6 +14,9 @@ import android.view.WindowManager
 import android.widget.ImageView
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
+import android.os.Build
+
+
 
 
 class FloatWidgetService: Service() {
@@ -38,13 +41,25 @@ class FloatWidgetService: Service() {
         mFloatingWidget = LayoutInflater.from(this).inflate(R.layout.layout_floating_widget, null)
 
         try {
+
+            val layout_parms: Int
+
+            if (Build.VERSION.SDK_INT >= 23) {
+                layout_parms = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+
+            } else {
+
+                layout_parms = WindowManager.LayoutParams.TYPE_PHONE
+
+            }
+
+
             val params = WindowManager.LayoutParams(
                     WindowManager.LayoutParams.WRAP_CONTENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
+                    layout_parms,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT)
-
 
 
             params.gravity = Gravity.TOP or Gravity.LEFT

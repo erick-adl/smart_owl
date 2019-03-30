@@ -49,7 +49,7 @@ class HomeController implements BlocBase {
     try {
       print('Connecting...');
       sendDataStatus('Connecting...');
-      client = MqttClient('iot.eclipse.org', '');
+      client = MqttClient('broker.hivemq.com', '');
       _mqttConnect();
     } on Exception catch (e) {
       print(e.toString());
@@ -83,11 +83,10 @@ class HomeController implements BlocBase {
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
-    print(
-        "******************** _handleMethod ****************** ${call.arguments}");
-
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     String pubTopic = 'smart-owl/command/${call.arguments}';
+
+    print("###### DEBUG ###### ${call.arguments}");
 
     switch (call.method) {
       case "button_left":
@@ -116,7 +115,11 @@ class HomeController implements BlocBase {
         break;
 
       case "StartBubble":
-        print(call.arguments);
+        try {
+          print(call.arguments);
+        } catch (e) {
+          print("###### DEBUG ###### ${e.toString()}");
+        }
         // sendData(call.arguments);
         return new Future.value(call.arguments);
     }
@@ -151,8 +154,7 @@ class HomeController implements BlocBase {
       sendDataStatus('Conectado');
     } else {
       /// Use status here rather than state if you also want the broker return code.
-      sendDataStatus(
-          'Falha: ${client.connectionStatus}');
+      sendDataStatus('Falha: ${client.connectionStatus}');
       client.disconnect();
     }
 

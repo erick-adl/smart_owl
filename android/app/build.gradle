@@ -45,8 +45,8 @@ android {
         applicationId "erick.com.smartowl"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 3
-        versionName '3'
+        versionCode 6
+        versionName '6'
         //         versionCode flutterVersionCode.toInteger()
         // versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

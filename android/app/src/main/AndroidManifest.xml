@@ -18,6 +18,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Smart Owl"
         android:icon="@mipmap/ic_launcher">
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
