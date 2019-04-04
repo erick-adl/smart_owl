@@ -10,13 +10,14 @@
 
 
 
-#include <DNSServer.h>
+
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #include <Servo.h>
 #include <EEPROM.h>
+#include <DNSServer.h>
 
 WiFiServer server(80);
 WiFiManager wifiManager;
@@ -221,38 +222,37 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 
 
-  if (stringPayload.equals("button_left")) {
+  if (stringPayload.indexOf("_left") > 0) {
     if (posServoX <= 180) {
       posServoX += 10;
       myservoX.write(posServoX);
       Serial.println(posServoX);
     }
 
-  }
-  if (stringPayload.equals("button_right")) {
-    if (posServoX > 30) {
+  }else if (stringPayload.indexOf("_right") > 0) {
+     if (posServoX > 30) {
       posServoX -= 10;
       myservoX.write(posServoX);
       Serial.println(posServoX);
     }
   }
-  if (stringPayload.equals("button_up")) {
-    if (posServoY <= 140) {
+  else if (stringPayload.indexOf("_up") > 0) {
+      if (posServoY <= 140) {
       posServoY += 10;
       myservoY.write(posServoY);
       Serial.println(posServoY);
     }
   }
-
-  if (stringPayload.equals("button_down")) {
-    if (posServoY > 110) {
+  
+  else if (stringPayload.indexOf("_down") > 0) {
+      if (posServoY > 110) {
       posServoY -= 10;
       myservoY.write(posServoY);
       Serial.println(posServoY);
     }
   }
 
-  if (stringPayload.equals("button_center")) {
+  else if (stringPayload.indexOf("_center") > 0) {
 
     //Use save position
     posServoY = SaveposServoY;
@@ -263,7 +263,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     myservoY.write(posServoY);
   }
 
-  if (stringPayload.equals("button_save")) {
+  else if (stringPayload.indexOf("_save") > 0) {
     //Save position of servos
     SaveposServoY = posServoY;
     SaveposServoX = posServoX;
@@ -272,6 +272,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     EEPROM.write(0, posServoX);
     EEPROM.write(1, posServoY);
     EEPROM.end();
+  }else{
+    Serial.println("payload incorreto");
   }
 
 }
