@@ -44,7 +44,11 @@ class HomeController implements BlocBase {
     _inDataOnlineBoardsController.add(_onlineBoards);
     print('Disconnecting');
     sendDataStatus('Disconnecting');
-    client.disconnect();
+    try {
+      client.disconnect();
+    } catch (e) {
+      print('${e.toString()}');
+    }
     await MqttUtilities.asyncSleep(2);
     try {
       print('Connecting...');
